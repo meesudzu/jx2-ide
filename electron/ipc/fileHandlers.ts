@@ -38,6 +38,64 @@ export function registerFileHandlers(ipcMain: IpcMain) {
         }
     })
 
+    // Helper to resolve duplicate file names by appending (1), (2), etc.
+    const resolveDuplicatePath = (targetPath: string): string => {
+        if (!fs.existsSync(targetPath)) return targetPath
+
+        const parsed = path.parse(targetPath)
+        let newPath = targetPath
+        let counter = 1
+
+        while (fs.existsSync(newPath)) {
+            newPath = path.join(parsed.dir, `${parsed.name} (${counter})${parsed.ext}`)
+            counter++
+        }
+        return newPath
+    }
+
+    // Create a new empty file or directory
+    ipcMain.handle('file:create', (_event, targetPath: string, isDirectory: boolean) => {
+        try {
+            const finalPath = resolveDuplicatePath(targetPath)
+            if (isDirectory) {
+                fs.mkdirSync(finalPath, { recursive: true })
+            } else {
+                fs.writeFileSync(finalPath, '')
+            }
+        } catch (err: any) {
+            throw new Error(`Failed to create: ${err.message}`)
+        }
+    })
+
+    // Rename a file or directory
+    ipcMain.handle('file:rename', (_event, oldPath: string, newPath: string) => {
+        try {
+            const finalPath = resolveDuplicatePath(newPath)
+            fs.renameSync(oldPath, finalPath)
+        } catch (err: any) {
+            throw new Error(`Failed to rename: ${err.message}`)
+        }
+    })
+
+    // Delete a file or directory
+    ipcMain.handle('file:delete', (_event, targetPath: string) => {
+        try {
+            fs.rmSync(targetPath, { recursive: true, force: true })
+        } catch (err: any) {
+            throw new Error(`Failed to delete: ${err.message}`)
+        }
+    })
+
+    // Copy a file or directory
+    ipcMain.handle('file:copy', (_event, sourcePath: string, targetPath: string) => {
+        try {
+            const finalPath = resolveDuplicatePath(targetPath)
+            fs.cpSync(sourcePath, finalPath, { recursive: true })
+        } catch (err: any) {
+            throw new Error(`Failed to copy: ${err.message}`)
+        }
+    })
+
     // List directory contents with GB18030 filename decoding
     ipcMain.handle('file:listDir', (_event, dirPath: string) => {
         try {

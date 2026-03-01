@@ -45,6 +45,10 @@ export interface JX2API {
     unwatchLog: (id: string) => Promise<void>
     onLogData: (callback: (id: string, data: string) => void) => () => void
     platform: string
+    createFile: (targetPath: string, isDirectory: boolean) => Promise<void>
+    renameFile: (oldPath: string, newPath: string) => Promise<void>
+    deleteFile: (targetPath: string) => Promise<void>
+    copyFile: (sourcePath: string, targetPath: string) => Promise<void>
 }
 
 declare global {

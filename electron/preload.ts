@@ -47,6 +47,18 @@ const api = {
     selectDirectory: (): Promise<string | null> =>
         ipcRenderer.invoke('file:selectDir'),
 
+    createFile: (targetPath: string, isDirectory: boolean): Promise<void> =>
+        ipcRenderer.invoke('file:create', targetPath, isDirectory),
+
+    renameFile: (oldPath: string, newPath: string): Promise<void> =>
+        ipcRenderer.invoke('file:rename', oldPath, newPath),
+
+    deleteFile: (targetPath: string): Promise<void> =>
+        ipcRenderer.invoke('file:delete', targetPath),
+
+    copyFile: (sourcePath: string, targetPath: string): Promise<void> =>
+        ipcRenderer.invoke('file:copy', sourcePath, targetPath),
+
     // Search operations
     search: (query: string, projectRoot: string, fileExtensions?: string[]): Promise<SearchResult> =>
         ipcRenderer.invoke('search:across', query, projectRoot, fileExtensions),

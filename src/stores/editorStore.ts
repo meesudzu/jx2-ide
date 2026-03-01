@@ -3,7 +3,7 @@
  */
 
 import { create } from 'zustand'
-import type { Encoding, FileEntry } from './types'
+import type { Encoding, FileEntry } from '../types'
 
 export interface OpenTab {
     id: string
@@ -15,10 +15,19 @@ export interface OpenTab {
     isTabular: boolean // TSV grid view for .txt files
 }
 
+export interface ClipboardState {
+    action: 'copy' | 'cut'
+    path: string
+}
+
 interface EditorState {
     // Project
     projectRoot: string | null
     setProjectRoot: (root: string) => void
+
+    // Clipboard
+    clipboard: ClipboardState | null
+    setClipboard: (state: ClipboardState | null) => void
 
     // File tree
     fileTree: FileEntry[]
@@ -57,6 +66,10 @@ export const useEditorStore = create<EditorState>((set, get) => ({
     // Project
     projectRoot: null,
     setProjectRoot: (root) => set({ projectRoot: root }),
+
+    // Clipboard
+    clipboard: null,
+    setClipboard: (clipboard) => set({ clipboard }),
 
     // File tree
     fileTree: [],
