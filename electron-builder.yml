@@ -1,0 +1,73 @@
+appId: com.jx2devstudio.app
+productName: JX2 DevStudio
+copyright: Copyright © 2026 JX2 DevStudio
+
+directories:
+  output: release/${version}
+
+files:
+  - dist
+  - dist-electron
+  - "!node_modules/**/*"
+  - node_modules/iconv-lite/**/*
+  - node_modules/safer-buffer/**/*
+  - node_modules/chokidar/**/*
+
+asar: true
+compression: maximum
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  icon: build/icon.ico
+  artifactName: JX2-DevStudio-${version}-win-${arch}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: JX2 DevStudio
+
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+    - target: zip
+      arch: [x64, arm64]
+  icon: build/icon.icns
+  category: public.app-category.developer-tools
+  artifactName: JX2-DevStudio-${version}-mac-${arch}.${ext}
+
+dmg:
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+    - target: tar.gz
+      arch: [x64]
+  icon: build/icons
+  category: Development
+  artifactName: JX2-DevStudio-${version}-linux-${arch}.${ext}
+  desktop:
+    Name: JX2 DevStudio
+    Comment: IDE for JX2 Game Server Development
+    Categories: Development;IDE;TextEditor;
